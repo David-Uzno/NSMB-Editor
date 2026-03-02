@@ -273,6 +273,22 @@ namespace NSMBe5 {
 			this.recentFilesListBox.Size = new System.Drawing.Size(709, 501);
 			this.recentFilesListBox.TabIndex = 0;
 			this.recentFilesListBox.DoubleClick += new System.EventHandler(this.RecentFilesListBox_DoubleClick);
+			// Context menu for recent files
+			this.recentFilesContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.removeProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.recentFilesContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+				this.showInExplorerToolStripMenuItem,
+				this.removeProjectToolStripMenuItem});
+			this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
+			this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.showInExplorerToolStripMenuItem.Text = "Show in Explorer";
+			this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.ShowInExplorerMenuItem_Click);
+			this.removeProjectToolStripMenuItem.Name = "removeProjectToolStripMenuItem";
+			this.removeProjectToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.removeProjectToolStripMenuItem.Text = "Remove project from list";
+			this.removeProjectToolStripMenuItem.Click += new System.EventHandler(this.RemoveProjectMenuItem_Click);
+			this.recentFilesListBox.ContextMenuStrip = this.recentFilesContextMenu;
 			// 
 			// clearRecentFilesButton
 			// 
@@ -1145,7 +1161,10 @@ namespace NSMBe5 {
         private System.Windows.Forms.Label lblDLPMode1;
         private System.Windows.Forms.CheckBox dlpCheckBox;
         private System.Windows.Forms.Label lblDLPMode2;
-        private System.Windows.Forms.OpenFileDialog openROMDialog;
+		private System.Windows.Forms.OpenFileDialog openROMDialog;
+		private System.Windows.Forms.ContextMenuStrip recentFilesContextMenu;
+		private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem removeProjectToolStripMenuItem;
         private System.Windows.Forms.Button xdelta_import;
         private System.Windows.Forms.Button xdelta_export;
         private System.Windows.Forms.ComboBox patchMethodComboBox;

@@ -1394,6 +1394,47 @@ namespace NSMBe5 {
             }
         }
 
+        private void ShowInExplorerMenuItem_Click(object sender, EventArgs e)
+        {
+            if (recentFilesListBox == null) return;
+            if (recentFilesListBox.SelectedItem is string filePath)
+            {
+                if (System.IO.File.Exists(filePath))
+                {
+                    try
+                    {
+                        Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
+                    }
+                    catch
+                    {
+                        try { Process.Start("explorer.exe", Path.GetDirectoryName(filePath)); } catch { }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"File not found: {filePath}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var recentFiles = GetRecentFiles();
+                    recentFiles.Remove(filePath);
+                    Properties.Settings.Default.RecentFiles = string.Join(";", recentFiles.ToArray());
+                    Properties.Settings.Default.Save();
+                    UpdateRecentFilesMenu();
+                }
+            }
+        }
+
+        private void RemoveProjectMenuItem_Click(object sender, EventArgs e)
+        {
+            if (recentFilesListBox == null) return;
+            if (recentFilesListBox.SelectedItem is string filePath)
+            {
+                var recentFiles = GetRecentFiles();
+                recentFiles.Remove(filePath);
+                Properties.Settings.Default.RecentFiles = string.Join(";", recentFiles.ToArray());
+                Properties.Settings.Default.Save();
+                UpdateRecentFilesMenu();
+            }
+        }
+
         #endregion
     }
 }
