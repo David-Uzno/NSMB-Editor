@@ -110,7 +110,7 @@ namespace NSMBe5
             if (palOffs + palLen > pal.Length)
                 palLen = pal.Length - palOffs;
             File ifl = new InlineFile(f, palOffs * 2, palLen * 2, f.name + " - "+i);
-            LevelChooser.showImgMgr();
+            LevelChooser.ShowImgMgr();
             LevelChooser.imgMgr.m.addPalette(new FilePalette(ifl));
         }
 

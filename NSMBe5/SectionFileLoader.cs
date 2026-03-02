@@ -16,7 +16,7 @@ namespace NSMBe5
                 new PaletteViewer(new InlineFile(f, offs + 0x18, size - 0x18, f.name)).Show();
             else if (magic == 0x43484152) //CHAR
             {
-                LevelChooser.showImgMgr();
+                LevelChooser.ShowImgMgr();
                 int tileWidth = f.getUshortAt(offs + 0xA);
                 if (tileWidth == 0xFFFF)
                     tileWidth = 8;

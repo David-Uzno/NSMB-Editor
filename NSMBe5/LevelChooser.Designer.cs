@@ -159,14 +159,14 @@ namespace NSMBe5 {
 			this.openROMToolStripMenuItem.Name = "openROMToolStripMenuItem";
 			this.openROMToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			this.openROMToolStripMenuItem.Text = "Open ROM...";
-			this.openROMToolStripMenuItem.Click += new System.EventHandler(this.openROMToolStripMenuItem_Click);
+			this.openROMToolStripMenuItem.Click += new System.EventHandler(this.OpenROMToolStripMenuItem_Click);
 			// 
 			// openBackupsToolStripMenuItem
 			// 
 			this.openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
 			this.openBackupsToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			this.openBackupsToolStripMenuItem.Text = "Open Backups";
-			this.openBackupsToolStripMenuItem.Click += new System.EventHandler(this.openBackupsToolStripMenuItem_Click);
+			this.openBackupsToolStripMenuItem.Click += new System.EventHandler(this.OpenBackupsToolStripMenuItem_Click);
 			// 
 			// recentFilesToolStripMenuItem
 			// 
@@ -185,7 +185,7 @@ namespace NSMBe5 {
 			this.closeROMToolStripMenuItem.Name = "closeROMToolStripMenuItem";
 			this.closeROMToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			this.closeROMToolStripMenuItem.Text = "Close ROM";
-			this.closeROMToolStripMenuItem.Click += new System.EventHandler(this.closeROMToolStripMenuItem_Click);
+			this.closeROMToolStripMenuItem.Click += new System.EventHandler(this.CloseROMToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
@@ -197,7 +197,7 @@ namespace NSMBe5 {
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
 			// 
 			// connectToolStripMenuItem
 			// 
@@ -214,7 +214,7 @@ namespace NSMBe5 {
 			this.connectToNetworkToolStripMenuItem.Name = "connectToNetworkToolStripMenuItem";
 			this.connectToNetworkToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
 			this.connectToNetworkToolStripMenuItem.Text = "Connect";
-			this.connectToNetworkToolStripMenuItem.Click += new System.EventHandler(this.connectToNetworkToolStripMenuItem_Click);
+			this.connectToNetworkToolStripMenuItem.Click += new System.EventHandler(this.ConnectToNetworkToolStripMenuItem_Click);
 			// 
 			// hostTextBox
 			// 
@@ -272,7 +272,7 @@ namespace NSMBe5 {
 			this.recentFilesListBox.Name = "recentFilesListBox";
 			this.recentFilesListBox.Size = new System.Drawing.Size(709, 501);
 			this.recentFilesListBox.TabIndex = 0;
-			this.recentFilesListBox.DoubleClick += new System.EventHandler(this.recentFilesListBox_DoubleClick);
+			this.recentFilesListBox.DoubleClick += new System.EventHandler(this.RecentFilesListBox_DoubleClick);
 			// 
 			// clearRecentFilesButton
 			// 
@@ -317,7 +317,7 @@ namespace NSMBe5 {
 			this.openClipboard.TabIndex = 8;
 			this.openClipboard.Text = "<OpenClipboard>";
 			this.openClipboard.UseVisualStyleBackColor = true;
-			this.openClipboard.Click += new System.EventHandler(this.openClipboard_Click);
+			this.openClipboard.Click += new System.EventHandler(this.OpenClipboard_Click);
 			// 
 			// exportClipboard
 			// 
@@ -330,7 +330,7 @@ namespace NSMBe5 {
 			this.exportClipboard.TabIndex = 7;
 			this.exportClipboard.Text = "<ExportToClipboard>";
 			this.exportClipboard.UseVisualStyleBackColor = true;
-			this.exportClipboard.Click += new System.EventHandler(this.exportClipboard_Click);
+			this.exportClipboard.Click += new System.EventHandler(this.ExportClipboard_Click);
 			// 
 			// importClipboard
 			// 
@@ -343,7 +343,7 @@ namespace NSMBe5 {
 			this.importClipboard.TabIndex = 6;
 			this.importClipboard.Text = "<ImportClipboard>";
 			this.importClipboard.UseVisualStyleBackColor = true;
-			this.importClipboard.Click += new System.EventHandler(this.importClipboard_Click);
+			this.importClipboard.Click += new System.EventHandler(this.ImportClipboard_Click);
 			// 
 			// openLevel
 			// 
@@ -355,7 +355,7 @@ namespace NSMBe5 {
 			this.openLevel.TabIndex = 5;
 			this.openLevel.Text = "<OpenExportedLevel>";
 			this.openLevel.UseVisualStyleBackColor = true;
-			this.openLevel.Click += new System.EventHandler(this.openLevel_Click);
+			this.openLevel.Click += new System.EventHandler(this.OpenLevel_Click);
 			// 
 			// hexEditLevelButton
 			// 
@@ -368,7 +368,7 @@ namespace NSMBe5 {
 			this.hexEditLevelButton.TabIndex = 4;
 			this.hexEditLevelButton.Text = "<hexEditLevelButton>";
 			this.hexEditLevelButton.UseVisualStyleBackColor = true;
-			this.hexEditLevelButton.Click += new System.EventHandler(this.hexEditLevelButton_Click);
+			this.hexEditLevelButton.Click += new System.EventHandler(this.HexEditLevelButton_Click);
 			// 
 			// exportLevelButton
 			// 
@@ -381,7 +381,7 @@ namespace NSMBe5 {
 			this.exportLevelButton.TabIndex = 3;
 			this.exportLevelButton.Text = "<exportLevelButton>";
 			this.exportLevelButton.UseVisualStyleBackColor = true;
-			this.exportLevelButton.Click += new System.EventHandler(this.exportLevelButton_Click);
+			this.exportLevelButton.Click += new System.EventHandler(this.ExportLevelButton_Click);
 			// 
 			// importLevelButton
 			// 
@@ -394,7 +394,7 @@ namespace NSMBe5 {
 			this.importLevelButton.TabIndex = 2;
 			this.importLevelButton.Text = "<importLevelButton>";
 			this.importLevelButton.UseVisualStyleBackColor = true;
-			this.importLevelButton.Click += new System.EventHandler(this.importLevelButton_Click);
+			this.importLevelButton.Click += new System.EventHandler(this.ImportLevelButton_Click);
 			// 
 			// editLevelButton
 			// 
@@ -407,7 +407,7 @@ namespace NSMBe5 {
 			this.editLevelButton.TabIndex = 1;
 			this.editLevelButton.Text = "<editLevelButton>";
 			this.editLevelButton.UseVisualStyleBackColor = true;
-			this.editLevelButton.Click += new System.EventHandler(this.editLevelButton_Click);
+			this.editLevelButton.Click += new System.EventHandler(this.EditLevelButton_Click);
 			// 
 			// levelTreeView
 			// 
@@ -419,8 +419,8 @@ namespace NSMBe5 {
 			this.levelTreeView.Name = "levelTreeView";
 			this.levelTreeView.Size = new System.Drawing.Size(695, 473);
 			this.levelTreeView.TabIndex = 0;
-			this.levelTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.levelTreeView_AfterSelect);
-			this.levelTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.levelTreeView_NodeMouseDoubleClick);
+			this.levelTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.LevelTreeView_AfterSelect);
+			this.levelTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.LevelTreeView_NodeMouseDoubleClick);
 			// 
 			// tabPage5
 			// 
@@ -544,7 +544,7 @@ namespace NSMBe5 {
 			this.dlpCheckBox.TabIndex = 10;
 			this.dlpCheckBox.Text = "<Enable Download Play-friendly mode>";
 			this.dlpCheckBox.UseVisualStyleBackColor = true;
-			this.dlpCheckBox.CheckedChanged += new System.EventHandler(this.dlpCheckBox_CheckedChanged);
+			this.dlpCheckBox.CheckedChanged += new System.EventHandler(this.DlpCheckBox_CheckedChanged);
 			// 
 			// musicSlotsGrp
 			// 
@@ -572,7 +572,7 @@ namespace NSMBe5 {
 			this.renameBtn.TabIndex = 10;
 			this.renameBtn.Text = "<Rename>";
 			this.renameBtn.UseVisualStyleBackColor = true;
-			this.renameBtn.Click += new System.EventHandler(this.renameBtn_Click);
+			this.renameBtn.Click += new System.EventHandler(this.RenameBtn_Click);
 			// 
 			// musicList
 			// 
@@ -637,7 +637,7 @@ namespace NSMBe5 {
 			this.patchExport.TabIndex = 3;
 			this.patchExport.Text = "<patchExport>";
 			this.patchExport.UseVisualStyleBackColor = true;
-			this.patchExport.Click += new System.EventHandler(this.patchExport_Click);
+			this.patchExport.Click += new System.EventHandler(this.PatchExport_Click);
 			// 
 			// patchImport
 			// 
@@ -648,7 +648,7 @@ namespace NSMBe5 {
 			this.patchImport.TabIndex = 3;
 			this.patchImport.Text = "<patchImport>";
 			this.patchImport.UseVisualStyleBackColor = true;
-			this.patchImport.Click += new System.EventHandler(this.patchImport_Click);
+			this.patchImport.Click += new System.EventHandler(this.PatchImport_Click);
 			// 
 			// nsmbToolsGroupbox
 			// 
@@ -674,7 +674,7 @@ namespace NSMBe5 {
 			this.mpPatch2.TabIndex = 5;
 			this.mpPatch2.Text = "<mpPatch2>";
 			this.mpPatch2.UseVisualStyleBackColor = true;
-			this.mpPatch2.Click += new System.EventHandler(this.mpPatch2_Click);
+			this.mpPatch2.Click += new System.EventHandler(this.MpPatch2_Click);
 			// 
 			// dataFinderButton
 			// 
@@ -687,7 +687,7 @@ namespace NSMBe5 {
 			this.dataFinderButton.TabIndex = 3;
 			this.dataFinderButton.Text = "<dataFinderButton>";
 			this.dataFinderButton.UseVisualStyleBackColor = true;
-			this.dataFinderButton.Click += new System.EventHandler(this.dataFinderButton_Click);
+			this.dataFinderButton.Click += new System.EventHandler(this.DataFinderButton_Click);
 			// 
 			// asmToolsGroupbox
 			// 
@@ -714,7 +714,7 @@ namespace NSMBe5 {
 			this.cleanBuild.TabIndex = 3;
 			this.cleanBuild.Text = "<Clean build>";
 			this.cleanBuild.UseVisualStyleBackColor = true;
-			this.cleanBuild.Click += new System.EventHandler(this.cleanBuild_Click);
+			this.cleanBuild.Click += new System.EventHandler(this.CleanBuild_Click);
 			// 
 			// compileInsert
 			// 
@@ -727,7 +727,7 @@ namespace NSMBe5 {
 			this.compileInsert.TabIndex = 3;
 			this.compileInsert.Text = "<Compile and insert>";
 			this.compileInsert.UseVisualStyleBackColor = true;
-			this.compileInsert.Click += new System.EventHandler(this.compileInsert_Click);
+			this.compileInsert.Click += new System.EventHandler(this.CompileInsert_Click);
 			// 
 			// decompArm9Bin
 			// 
@@ -740,7 +740,7 @@ namespace NSMBe5 {
 			this.decompArm9Bin.TabIndex = 3;
 			this.decompArm9Bin.Text = "<Decompress ARM9 binary>";
 			this.decompArm9Bin.UseVisualStyleBackColor = true;
-			this.decompArm9Bin.Click += new System.EventHandler(this.decompArm9Bin_Click);
+			this.decompArm9Bin.Click += new System.EventHandler(this.DecompArm9Bin_Click);
 			// 
 			// groupBox1
 			// 
@@ -774,7 +774,7 @@ namespace NSMBe5 {
 			this.managePluginsBtn.TabIndex = 18;
 			this.managePluginsBtn.Text = "Manage Plugins";
 			this.managePluginsBtn.UseVisualStyleBackColor = true;
-			this.managePluginsBtn.Click += new System.EventHandler(this.managePluginsBtn_Click);
+			this.managePluginsBtn.Click += new System.EventHandler(this.ManagePluginsBtn_Click);
 			// 
 			// setFontBtn
 			// 
@@ -785,7 +785,7 @@ namespace NSMBe5 {
 			this.setFontBtn.TabIndex = 17;
 			this.setFontBtn.Text = "Set";
 			this.setFontBtn.UseVisualStyleBackColor = true;
-			this.setFontBtn.Click += new System.EventHandler(this.setFontBtn_Click);
+			this.setFontBtn.Click += new System.EventHandler(this.SetFontBtn_Click);
 			// 
 			// label3
 			// 
@@ -813,7 +813,7 @@ namespace NSMBe5 {
 			this.patchMethodComboBox.Name = "patchMethodComboBox";
 			this.patchMethodComboBox.Size = new System.Drawing.Size(143, 24);
 			this.patchMethodComboBox.TabIndex = 14;
-			this.patchMethodComboBox.SelectedIndexChanged += new System.EventHandler(this.patchMethodComboBox_SelectedIndexChanged);
+			this.patchMethodComboBox.SelectedIndexChanged += new System.EventHandler(this.PatchMethodComboBox_SelectedIndexChanged);
 			// 
 			// label4
 			// 
@@ -833,7 +833,7 @@ namespace NSMBe5 {
 			this.languagesComboBox.Name = "languagesComboBox";
 			this.languagesComboBox.Size = new System.Drawing.Size(143, 24);
 			this.languagesComboBox.TabIndex = 14;
-			this.languagesComboBox.SelectedIndexChanged += new System.EventHandler(this.languagesComboBox_SelectedIndexChanged);
+			this.languagesComboBox.SelectedIndexChanged += new System.EventHandler(this.LanguagesComboBox_SelectedIndexChanged);
 			// 
 			// languageLabel
 			// 
@@ -854,7 +854,7 @@ namespace NSMBe5 {
 			this.deleteBackups.TabIndex = 13;
 			this.deleteBackups.Text = "<Delete all backups>";
 			this.deleteBackups.UseVisualStyleBackColor = true;
-			this.deleteBackups.Click += new System.EventHandler(this.deleteBackups_Click);
+			this.deleteBackups.Click += new System.EventHandler(this.DeleteBackups_Click);
 			// 
 			// minutesLabel
 			// 
@@ -888,7 +888,7 @@ namespace NSMBe5 {
             0,
             0,
             0});
-			this.autoBackupTime.ValueChanged += new System.EventHandler(this.autoBackupTime_ValueChanged);
+			this.autoBackupTime.ValueChanged += new System.EventHandler(this.AutoBackupTime_ValueChanged);
 			// 
 			// updateStageObjSetsButton
 			// 
@@ -901,7 +901,7 @@ namespace NSMBe5 {
 			this.updateStageObjSetsButton.TabIndex = 3;
 			this.updateStageObjSetsButton.Text = "<UpdateStageObjSets>";
 			this.updateStageObjSetsButton.UseVisualStyleBackColor = true;
-			this.updateStageObjSetsButton.Click += new System.EventHandler(this.updateStageObjSetsButton_Click);
+			this.updateStageObjSetsButton.Click += new System.EventHandler(this.UpdateStageObjSetsButton_Click);
 			// 
 			// chkAutoBackup
 			// 
@@ -913,7 +913,7 @@ namespace NSMBe5 {
 			this.chkAutoBackup.TabIndex = 9;
 			this.chkAutoBackup.Text = "<Backup levels>";
 			this.chkAutoBackup.UseVisualStyleBackColor = true;
-			this.chkAutoBackup.CheckedChanged += new System.EventHandler(this.autoBackupTime_ValueChanged);
+			this.chkAutoBackup.CheckedChanged += new System.EventHandler(this.AutoBackupTime_ValueChanged);
 			// 
 			// tabPage4
 			// 
@@ -961,7 +961,7 @@ namespace NSMBe5 {
 			this.linkNSMBHD.Text = "NSMB Hacking Domain";
 			this.linkNSMBHD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.toolTip1.SetToolTip(this.linkNSMBHD, "http://nsmbhd.net/");
-			this.linkNSMBHD.Click += new System.EventHandler(this.linkNSMBHD_Click);
+			this.linkNSMBHD.Click += new System.EventHandler(this.LinkNSMBHD_Click);
 			// 
 			// linkOgRepo
 			// 
@@ -977,7 +977,7 @@ namespace NSMBe5 {
 			this.linkOgRepo.Text = "NSMBe on GitHub [The original repo]";
 			this.linkOgRepo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.toolTip1.SetToolTip(this.linkOgRepo, "https://github.com/Dirbaio/NSMB-Editor");
-			this.linkOgRepo.Click += new System.EventHandler(this.linkOgRepo_Click);
+			this.linkOgRepo.Click += new System.EventHandler(this.LinkOgRepo_Click);
 			// 
 			// linkRepo
 			// 
@@ -993,7 +993,7 @@ namespace NSMBe5 {
 			this.linkRepo.Text = "NSMBe on GitHub [The maintained repo]";
 			this.linkRepo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.toolTip1.SetToolTip(this.linkRepo, "https://github.com/MammaMiaTeam/NSMB-Editor");
-			this.linkRepo.Click += new System.EventHandler(this.linkRepo_Click);
+			this.linkRepo.Click += new System.EventHandler(this.LinkRepo_Click);
 			// 
 			// lblLinksHeader
 			// 

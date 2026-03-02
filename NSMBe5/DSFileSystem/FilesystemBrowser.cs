@@ -542,7 +542,7 @@ namespace NSMBe5.DSFileSystem
                 {
                     case "BANNER":
                         {
-                            LevelChooser.showImgMgr();
+                            LevelChooser.ShowImgMgr();
                             File imgFile = new InlineFile(f, 0x20, 0x200, f.name);
                             File palFile = new InlineFile(f, 0x220, 0x20, f.name);
                             LevelChooser.imgMgr.m.addImage(new Image2D(imgFile, 32, true));
@@ -551,7 +551,7 @@ namespace NSMBe5.DSFileSystem
                         break;
                     case "ENPG":
                         {
-                            LevelChooser.showImgMgr();
+                            LevelChooser.ShowImgMgr();
                             File imgFile = new InlineFile(f, 0, 0x10000, f.name);
                             File palFile = new InlineFile(f, 0x10000, 0x200, f.name);
                             LevelChooser.imgMgr.m.addImage(new EnpgImage2D(imgFile));
@@ -615,7 +615,7 @@ namespace NSMBe5.DSFileSystem
                         break;
                     case "NCG":
                         {
-                            LevelChooser.showImgMgr();
+                            LevelChooser.ShowImgMgr();
                             LevelChooser.imgMgr.m.addImage(new Image2D(f, 256, false));
                         }
                         break;

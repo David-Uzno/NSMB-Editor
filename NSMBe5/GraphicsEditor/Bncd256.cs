@@ -107,7 +107,7 @@ namespace NSMBe5
         }
         arrayInputStream.loadPos();
       }
-      LevelChooser.showImgMgr();
+      LevelChooser.ShowImgMgr();
       int num6 = 32;
       foreach (Bncd256.Bncd256Image image in this.images)
       {

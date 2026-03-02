@@ -144,7 +144,7 @@ namespace NSMBe5
     			inp.loadPos();
     		}
     		
-            LevelChooser.showImgMgr();
+            LevelChooser.ShowImgMgr();
 			int tileLen = 8*8/2;
 			foreach(BncdImage img in images)
 			{

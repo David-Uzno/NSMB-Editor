@@ -38,7 +38,7 @@ namespace NSMBe5 {
         public bool init = false;
         private bool romLoaded = false;
 
-        public static void showImgMgr()
+        public static void ShowImgMgr()
         {
             if (imgMgr == null || imgMgr.IsDisposed)
                 imgMgr = new ImageManagerWindow();
@@ -97,9 +97,9 @@ namespace NSMBe5 {
                 }
             }
             languagesComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            languagesComboBox.SelectedIndexChanged -= new EventHandler(languagesComboBox_SelectedIndexChanged);
+            languagesComboBox.SelectedIndexChanged -= new EventHandler(LanguagesComboBox_SelectedIndexChanged);
             languagesComboBox.SelectedItem = Properties.Settings.Default.LanguageFile;
-            languagesComboBox.SelectedIndexChanged += new EventHandler(languagesComboBox_SelectedIndexChanged);
+            languagesComboBox.SelectedIndexChanged += new EventHandler(LanguagesComboBox_SelectedIndexChanged);
 
             string[] codePatchingMethods =
             {
@@ -110,9 +110,9 @@ namespace NSMBe5 {
 
             patchMethodComboBox.Items.AddRange(codePatchingMethods);
             patchMethodComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            patchMethodComboBox.SelectedIndexChanged -= new EventHandler(patchMethodComboBox_SelectedIndexChanged);
+            patchMethodComboBox.SelectedIndexChanged -= new EventHandler(PatchMethodComboBox_SelectedIndexChanged);
             patchMethodComboBox.SelectedIndex = Properties.Settings.Default.CodePatchingMethod;
-            patchMethodComboBox.SelectedIndexChanged += new EventHandler(patchMethodComboBox_SelectedIndexChanged);
+            patchMethodComboBox.SelectedIndexChanged += new EventHandler(PatchMethodComboBox_SelectedIndexChanged);
 
             fontTextBox.Text = Properties.Settings.Default.UIFont;
             Program.ApplyFontToControls(Controls);
@@ -158,7 +158,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void levelTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
+        private void LevelTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
             bool enabled = e.Node.Tag != null;
             importLevelButton.Enabled = enabled;
             exportLevelButton.Enabled = enabled;
@@ -168,7 +168,7 @@ namespace NSMBe5 {
             exportClipboard.Enabled = enabled;
         }
 
-        private void editLevelButton_Click(object sender, EventArgs e)
+        private void EditLevelButton_Click(object sender, EventArgs e)
         {
             // Make a caption
             string EditorCaption = "";
@@ -191,7 +191,7 @@ namespace NSMBe5 {
             }                
         }
 
-        private void hexEditLevelButton_Click(object sender, EventArgs e) {
+        private void HexEditLevelButton_Click(object sender, EventArgs e) {
             if (levelTreeView.SelectedNode == null) return;
 
             // Make a caption
@@ -206,8 +206,10 @@ namespace NSMBe5 {
             // Open it
             try
             {
-                LevelHexEditor NewEditor = new LevelHexEditor((string)levelTreeView.SelectedNode.Tag);
-                NewEditor.Text = EditorCaption;
+                LevelHexEditor NewEditor = new LevelHexEditor((string)levelTreeView.SelectedNode.Tag)
+                {
+                    Text = EditorCaption
+                };
                 NewEditor.Show();
             }
             catch (AlreadyEditingException)
@@ -216,13 +218,13 @@ namespace NSMBe5 {
             }                
         }
 
-        private void levelTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
+        private void LevelTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
             if (e.Node.Tag != null && editLevelButton.Enabled == true) {
-                editLevelButton_Click(null, null);
+                EditLevelButton_Click(null, null);
             }
         }
 
-        private void importLevelButton_Click(object sender, EventArgs e) {
+        private void ImportLevelButton_Click(object sender, EventArgs e) {
             if (levelTreeView.SelectedNode == null) return;
 
             // Figure out what file to import
@@ -246,7 +248,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void exportLevelButton_Click(object sender, EventArgs e) {
+        private void ExportLevelButton_Click(object sender, EventArgs e) {
             if (levelTreeView.SelectedNode == null) return;
 
             // Figure out what file to export to
@@ -265,7 +267,7 @@ namespace NSMBe5 {
             bw.Close();
         }
 
-        private void openLevel_Click(object sender, EventArgs e)
+        private void OpenLevel_Click(object sender, EventArgs e)
         {
             if (importLevelDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
@@ -276,9 +278,9 @@ namespace NSMBe5 {
             }
         }
 
-        private void importClipboard_Click(object sender, EventArgs e)
+        private void ImportClipboard_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show((LanguageManager.Get("LevelChooser", "replaceclipboard")), (LanguageManager.Get("LevelChooser", "replaceclipboardtitle")), MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+            if (MessageBox.Show(LanguageManager.Get("LevelChooser", "replaceclipboard"), LanguageManager.Get("LevelChooser", "replaceclipboardtitle"), MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
                 return;
             try
             {
@@ -290,11 +292,11 @@ namespace NSMBe5 {
             }
             catch (Exception ex)
             {
-                MessageBox.Show((LanguageManager.Get("LevelChooser", "clipinvalidlevel")));
+                MessageBox.Show(LanguageManager.Get("LevelChooser", "clipinvalidlevel"));
             }
         }
 
-        private void exportClipboard_Click(object sender, EventArgs e)
+        private void ExportClipboard_Click(object sender, EventArgs e)
         {
             string LevelFilename = (string)levelTreeView.SelectedNode.Tag;
             DSFileSystem.File LevelFile = ROM.getLevelFile(LevelFilename);
@@ -308,7 +310,7 @@ namespace NSMBe5 {
             bw.Close();
         }
 
-        private void openClipboard_Click(object sender, EventArgs e)
+        private void OpenClipboard_Click(object sender, EventArgs e)
         {
             try
             {
@@ -322,7 +324,7 @@ namespace NSMBe5 {
 
         private DataFinder DataFinderForm;
 
-        private void dataFinderButton_Click(object sender, EventArgs e) {
+        private void DataFinderButton_Click(object sender, EventArgs e) {
             if (DataFinderForm == null || DataFinderForm.IsDisposed) {
                 DataFinderForm = new DataFinder();
             }
@@ -350,7 +352,7 @@ namespace NSMBe5 {
         const string oldPatchHeader = "NSMBe4 Exported Patch";
         public const string patchHeader = "NSMBe5 Exported Patch";
 
-        private void patchExport_Click(object sender, EventArgs e)
+        private void PatchExport_Click(object sender, EventArgs e)
         {
             //output to show to the user
             bool differentRomsWarning = false; // tells if we have shown the warning
@@ -412,7 +414,7 @@ namespace NSMBe5 {
                 byte[] oldFile = orig.getContents();
                 byte[] newFile = f.getContents();
 
-                if (!arrayEqual(oldFile, newFile))
+                if (!ArrayEqual(oldFile, newFile))
                 {
                     //include file in patch
                     string fileName = orig.name;
@@ -435,7 +437,7 @@ namespace NSMBe5 {
             progress.WriteLine(string.Format(LanguageManager.Get("Patch", "ExportReady"), fileCount));
         }
 
-        public bool arrayEqual(byte[] a, byte[] b)
+        public static bool ArrayEqual(byte[] a, byte[] b)
         {
             if (a.Length != b.Length)
                 return false;
@@ -447,7 +449,7 @@ namespace NSMBe5 {
             return true;
         }
 
-        private void patchImport_Click(object sender, EventArgs e)
+        private void PatchImport_Click(object sender, EventArgs e)
         {
             //output to show to the user
             bool differentRomsWarning = false; // tells if we have shown the warning
@@ -519,7 +521,7 @@ namespace NSMBe5 {
 //            progress.Close();
         }
 
-        private void mpPatch_Click(object sender, EventArgs e)
+        private void MpPatch_Click(object sender, EventArgs e)
         {
             NarcReplace("Dat_Field.narc",    "J01_1.bin");
             NarcReplace("Dat_Basement.narc", "J02_1.bin");
@@ -535,7 +537,7 @@ namespace NSMBe5 {
             MessageBox.Show(LanguageManager.Get("General", "Completed"));
         }
 
-        private void mpPatch2_Click(object sender, EventArgs e)
+        private void MpPatch2_Click(object sender, EventArgs e)
         {
             NSMBLevel lvl = new NSMBLevel(new InternalLevelSource("J01_1", ""));
             NarcReplace("Dat_Field.narc", "I_M_nohara.bin", ROM.GetFileIDFromTable(lvl.Blocks[0][0xC], ROM.Data.Table_TS_UNT));
@@ -653,7 +655,7 @@ namespace NSMBe5 {
         }
 
         // Code hacking tools
-        private void decompArm9Bin_Click(object sender, EventArgs e)
+        private void DecompArm9Bin_Click(object sender, EventArgs e)
         {
             Arm9BinaryHandler handler = new Arm9BinaryHandler();
             handler.decompress();
@@ -675,7 +677,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void compileInsert_Click(object sender, EventArgs e)
+        private void CompileInsert_Click(object sender, EventArgs e)
         {
             CodePatcher patcher = GetCodePatcher(ROM.romfile.Directory);
 
@@ -689,7 +691,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void cleanBuild_Click(object sender, EventArgs e)
+        private void CleanBuild_Click(object sender, EventArgs e)
         {
             CodePatcher patcher = GetCodePatcher(ROM.romfile.Directory);
 
@@ -705,7 +707,7 @@ namespace NSMBe5 {
         
         //Settings
 
-        private void updateStageObjSetsButton_Click(object sender, EventArgs e)
+        private void UpdateStageObjSetsButton_Click(object sender, EventArgs e)
         {
 			StageObjSettings.Update();
         }
@@ -720,7 +722,7 @@ namespace NSMBe5 {
             Properties.Settings.Default.Save();
         }
 
-        private void renameBtn_Click(object sender, EventArgs e)
+        private void RenameBtn_Click(object sender, EventArgs e)
         {
             if (musicList.SelectedIndex == -1)
                 return;
@@ -740,7 +742,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void autoBackupTime_ValueChanged(object sender, EventArgs e)
+        private void AutoBackupTime_ValueChanged(object sender, EventArgs e)
         {
             if (init)
             {
@@ -749,9 +751,9 @@ namespace NSMBe5 {
             }
         }
 
-        private void deleteBackups_Click(object sender, EventArgs e)
+        private void DeleteBackups_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show((LanguageManager.Get("LevelChooser", "delbackup")), (LanguageManager.Get("LevelChooser", "delbacktitle")), MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show(LanguageManager.Get("LevelChooser", "delbackup"), LanguageManager.Get("LevelChooser", "delbacktitle"), MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
             {
                 String backupPath = Path.Combine(Application.StartupPath, "Backup");
                 if (System.IO.Directory.Exists(backupPath))
@@ -759,7 +761,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void dlpCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void DlpCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             ROM.dlpMode = dlpCheckBox.Checked;
             Properties.Settings.Default.dlpMode = dlpCheckBox.Checked;
@@ -775,16 +777,20 @@ namespace NSMBe5 {
         {
             MessageBox.Show(LanguageManager.Get("Patch", "XSelectROM") + LanguageManager.Get("Patch", "XRestartAfterApplied"), LanguageManager.Get("Patch", "XExport"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            OpenFileDialog cleanROM_openFileDialog = new OpenFileDialog();
-            cleanROM_openFileDialog.Title = "Please select a clean NSMB ROM file";
-            cleanROM_openFileDialog.Filter = "Nintendo DS ROM (*.nds)|*.nds|All files (*.*)|*.*";
+            OpenFileDialog cleanROM_openFileDialog = new OpenFileDialog
+            {
+                Title = "Please select a clean NSMB ROM file",
+                Filter = "Nintendo DS ROM (*.nds)|*.nds|All files (*.*)|*.*"
+            };
 
             if (cleanROM_openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            SaveFileDialog xdelta_saveFileDialog = new SaveFileDialog();
-            xdelta_saveFileDialog.Title = "Please select where to save the XDelta patch";
-            xdelta_saveFileDialog.Filter = "XDelta Patch (*.xdelta)|*.xdelta|All files (*.*)|*.*";
+            SaveFileDialog xdelta_saveFileDialog = new SaveFileDialog
+            {
+                Title = "Please select where to save the XDelta patch",
+                Filter = "XDelta Patch (*.xdelta)|*.xdelta|All files (*.*)|*.*"
+            };
 
             if (xdelta_saveFileDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -835,16 +841,20 @@ namespace NSMBe5 {
 
             MessageBox.Show(LanguageManager.Get("Patch", "XSelectROM"), LanguageManager.Get("Patch", "XImport"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            OpenFileDialog cleanROM_openFileDialog = new OpenFileDialog();
-            cleanROM_openFileDialog.Title = "Please select a clean NSMB ROM file";
-            cleanROM_openFileDialog.Filter = "Nintendo DS ROM (*.nds)|*.nds|All files (*.*)|*.*";
+            OpenFileDialog cleanROM_openFileDialog = new OpenFileDialog
+            {
+                Title = "Please select a clean NSMB ROM file",
+                Filter = "Nintendo DS ROM (*.nds)|*.nds|All files (*.*)|*.*"
+            };
 
             if (cleanROM_openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            OpenFileDialog xdelta_openFileDialog = new OpenFileDialog();
-            xdelta_openFileDialog.Title = "Please select the XDelta patch to import";
-            xdelta_openFileDialog.Filter = "XDelta Patch (*.xdelta)|*.xdelta|All files (*.*)|*.*";
+            OpenFileDialog xdelta_openFileDialog = new OpenFileDialog
+            {
+                Title = "Please select the XDelta patch to import",
+                Filter = "XDelta Patch (*.xdelta)|*.xdelta|All files (*.*)|*.*"
+            };
 
             if (xdelta_openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -892,13 +902,13 @@ namespace NSMBe5 {
             }
         }
 
-        private void patchMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void PatchMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.CodePatchingMethod = patchMethodComboBox.SelectedIndex;
             Properties.Settings.Default.Save();
         }
 
-        private void languagesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void LanguagesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selected = languagesComboBox.SelectedItem.ToString();
 
@@ -915,17 +925,17 @@ namespace NSMBe5 {
             MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void linkRepo_Click(object sender, EventArgs e)
+        private void LinkRepo_Click(object sender, EventArgs e)
         {
             Process.Start("https://github.com/TheGameratorT/NSMB-Editor");
         }
 
-        private void linkOgRepo_Click(object sender, EventArgs e)
+        private void LinkOgRepo_Click(object sender, EventArgs e)
         {
             Process.Start("https://github.com/Dirbaio/NSMB-Editor");
         }
 
-        private void linkNSMBHD_Click(object sender, EventArgs e)
+        private void LinkNSMBHD_Click(object sender, EventArgs e)
         {
             Process.Start("https://nsmbhd.net");
         }
@@ -938,7 +948,7 @@ namespace NSMBe5 {
             }
         }
 
-        private void setFontBtn_Click(object sender, EventArgs e)
+        private void SetFontBtn_Click(object sender, EventArgs e)
         {
             string fontName = fontTextBox.Text;
             if (IsFontInstalled(fontName))
@@ -952,34 +962,34 @@ namespace NSMBe5 {
             }
         }
 
-        private void managePluginsBtn_Click(object sender, EventArgs e)
+        private void ManagePluginsBtn_Click(object sender, EventArgs e)
 		{
 			PluginSelector.Open();
 		}
 
         #region Menu Event Handlers
 
-        private void openROMToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenROMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenROM();
         }
 
-        private void openBackupsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenBackupsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenBackups();
         }
 
-        private void closeROMToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CloseROMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseROM();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void connectToNetworkToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ConnectToNetworkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectToNetwork();
         }
@@ -992,8 +1002,10 @@ namespace NSMBe5 {
         {
             string path = "";
 
-            OpenFileDialog openROMDialog = new OpenFileDialog();
-            openROMDialog.Filter = LanguageManager.Get("Filters", "rom");
+            OpenFileDialog openROMDialog = new OpenFileDialog
+            {
+                Filter = LanguageManager.Get("Filters", "rom")
+            };
             if (Properties.Settings.Default.ROMFolder != "")
                 openROMDialog.InitialDirectory = Properties.Settings.Default.ROMFolder;
             if (openROMDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -1035,7 +1047,7 @@ namespace NSMBe5 {
                 NitroROMFilesystem fs = new NitroROMFilesystem(path);
                 Properties.Settings.Default.ROMPath = path;
                 Properties.Settings.Default.Save();
-                Properties.Settings.Default.ROMFolder = System.IO.Path.GetDirectoryName(path);
+                Properties.Settings.Default.ROMFolder = Path.GetDirectoryName(path);
                 Properties.Settings.Default.Save();
 
                 ROM.load(fs);
@@ -1287,7 +1299,7 @@ namespace NSMBe5 {
             {
                 for (int i = 0; i < recentFiles.Count; i++)
                 {
-                    var fileName = System.IO.Path.GetFileName(recentFiles[i]);
+                    var fileName = Path.GetFileName(recentFiles[i]);
                     var menuText = $"&{i + 1} {fileName}";
                     var menuItem = new ToolStripMenuItem(menuText)
                     {
@@ -1361,7 +1373,7 @@ namespace NSMBe5 {
             catch { }
         }
 
-        private void recentFilesListBox_DoubleClick(object sender, EventArgs e)
+        private void RecentFilesListBox_DoubleClick(object sender, EventArgs e)
         {
             if (recentFilesListBox == null) return;
             if (recentFilesListBox.SelectedItem is string filePath)
