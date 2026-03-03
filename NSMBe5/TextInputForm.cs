@@ -22,7 +22,21 @@ namespace NSMBe5
             textBox1.Text = defaultText;
             textBox1.Focus();
             textBox1.SelectAll();
+            this.StartPosition = FormStartPosition.CenterParent;
             DialogResult dresult = ShowDialog();
+            result = textBox1.Text;
+            return dresult;
+        }
+
+        public DialogResult ShowDialog(IWin32Window owner, string prompt, string defaultText, out string result)
+        {
+            LanguageManager.ApplyToContainer(this, "TextInputForm");
+            lblPrompt.Text = prompt;
+            textBox1.Text = defaultText;
+            textBox1.Focus();
+            textBox1.SelectAll();
+            this.StartPosition = FormStartPosition.CenterParent;
+            DialogResult dresult = ShowDialog(owner);
             result = textBox1.Text;
             return dresult;
         }

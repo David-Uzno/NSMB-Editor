@@ -45,35 +45,61 @@ namespace NSMBe5 {
         //   This causes it to be saved in the settings before the settings value is loaded.
         public bool init = false;
         private bool romLoaded = false;
+        private Dictionary<string, string> projectDisplayNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             // Currently loaded recent file path — only this card's title is bold
             private string currentLoadedRecentFile = null;
             private static string GetRelativeTimeString(DateTime dt)
             {
                 var span = DateTime.Now - dt;
                 if (span.TotalSeconds < 60)
-                    return "A few seconds ago";
+                    return LanguageManager.Get("LevelChooser", "Time_AfewSeconds") ?? "A few seconds ago";
+
                 if (span.TotalMinutes < 60)
                 {
                     int m = Math.Max(1, (int)span.TotalMinutes);
-                    return $"{m} minute{(m == 1 ? "" : "s")} ago";
+                    string key = m == 1 ? "Time_Minute_Singular" : "Time_Minute_Plural";
+                    string fmt = LanguageManager.Get("LevelChooser", key);
+                    if (string.IsNullOrEmpty(fmt))
+                        fmt = m == 1 ? "{0} minute ago" : "{0} minutes ago";
+                    return string.Format(fmt, m);
                 }
+
                 if (span.TotalHours < 24)
                 {
                     int h = Math.Max(1, (int)span.TotalHours);
-                    return $"{h} hour{(h == 1 ? "" : "s")} ago";
+                    string key = h == 1 ? "Time_Hour_Singular" : "Time_Hour_Plural";
+                    string fmt = LanguageManager.Get("LevelChooser", key);
+                    if (string.IsNullOrEmpty(fmt))
+                        fmt = h == 1 ? "{0} hour ago" : "{0} hours ago";
+                    return string.Format(fmt, h);
                 }
+
                 if (span.TotalDays < 30)
                 {
                     int d = Math.Max(1, (int)span.TotalDays);
-                    return $"{d} day{(d == 1 ? "" : "s")} ago";
+                    string key = d == 1 ? "Time_Day_Singular" : "Time_Day_Plural";
+                    string fmt = LanguageManager.Get("LevelChooser", key);
+                    if (string.IsNullOrEmpty(fmt))
+                        fmt = d == 1 ? "{0} day ago" : "{0} days ago";
+                    return string.Format(fmt, d);
                 }
+
                 if (span.TotalDays < 365)
                 {
                     int mo = Math.Max(1, (int)(span.TotalDays / 30));
-                    return $"{mo} month{(mo == 1 ? "" : "s")} ago";
+                    string key = mo == 1 ? "Time_Month_Singular" : "Time_Month_Plural";
+                    string fmt = LanguageManager.Get("LevelChooser", key);
+                    if (string.IsNullOrEmpty(fmt))
+                        fmt = mo == 1 ? "{0} month ago" : "{0} months ago";
+                    return string.Format(fmt, mo);
                 }
+
                 int y = Math.Max(1, (int)(span.TotalDays / 365));
-                return $"{y} year{(y == 1 ? "" : "s")} ago";
+                string ykey = y == 1 ? "Time_Year_Singular" : "Time_Year_Plural";
+                string yfmt = LanguageManager.Get("LevelChooser", ykey);
+                if (string.IsNullOrEmpty(yfmt))
+                    yfmt = y == 1 ? "{0} year ago" : "{0} years ago";
+                return string.Format(yfmt, y);
             }
             private void UpdateCardModifiedLabel(string filePath)
             {
@@ -142,7 +168,8 @@ namespace NSMBe5 {
             openTextFileDialog.Filter = LanguageManager.Get("Filters", "text");
             saveTextFileDialog.Filter = LanguageManager.Get("Filters", "text");
             
-            // Load recent files
+            // Load stored project display names and recent files
+            LoadProjectDisplayNames();
             LoadRecentFiles();
             
             //Get Language Files
@@ -821,7 +848,7 @@ namespace NSMBe5 {
             string newName;
             string oldName = musicList.SelectedItem.ToString();
             oldName = oldName.Substring(oldName.IndexOf(" ") + 1);
-            if (textForm.ShowDialog(LanguageManager.Get("LevelChooser", "rnmmusic"), oldName, out newName) == DialogResult.OK)
+            if (textForm.ShowDialog(this, LanguageManager.Get("LevelChooser", "rnmmusic"), oldName, out newName) == DialogResult.OK)
             {
                 if (newName == string.Empty)
                 {
@@ -1514,6 +1541,72 @@ namespace NSMBe5 {
             catch { }
         }
 
+        // Persistence for custom project display names
+        private string GetProjectDisplayNamesFilePath()
+        {
+            return Path.Combine(Application.StartupPath, "project_display_names.txt");
+        }
+
+        private void LoadProjectDisplayNames()
+        {
+            projectDisplayNames.Clear();
+            try
+            {
+                string fn = GetProjectDisplayNamesFilePath();
+                if (!System.IO.File.Exists(fn)) return;
+                foreach (var line in System.IO.File.ReadAllLines(fn))
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    int idx = line.IndexOf('\t');
+                    if (idx <= 0) continue;
+                    string p = line.Substring(0, idx);
+                    string n = line.Substring(idx + 1);
+                    projectDisplayNames[p] = n;
+                }
+            }
+            catch { }
+        }
+
+        private void SaveProjectDisplayNames()
+        {
+            try
+            {
+                string fn = GetProjectDisplayNamesFilePath();
+                var lines = new List<string>();
+                foreach (var kv in projectDisplayNames)
+                {
+                    string safeName = kv.Value?.Replace('\r', ' ').Replace('\n', ' ')
+                                               .Replace('\t', ' ') ?? "";
+                    lines.Add(kv.Key + "\t" + safeName);
+                }
+                System.IO.File.WriteAllLines(fn, lines.ToArray());
+            }
+            catch { }
+        }
+
+        private string GetProjectDisplayName(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return string.Empty;
+            if (projectDisplayNames.TryGetValue(filePath, out var name) && !string.IsNullOrEmpty(name))
+                return name;
+            return Path.GetFileNameWithoutExtension(filePath);
+        }
+
+        private void SetProjectDisplayName(string filePath, string displayName)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+            if (string.IsNullOrEmpty(displayName))
+            {
+                if (projectDisplayNames.ContainsKey(filePath))
+                    projectDisplayNames.Remove(filePath);
+            }
+            else
+            {
+                projectDisplayNames[filePath] = displayName;
+            }
+            SaveProjectDisplayNames();
+        }
+
         private Panel CreateProjectCard(string filePath)
         {
             int cardWidth = GetProjectsCardWidth();
@@ -1534,7 +1627,7 @@ namespace NSMBe5 {
                 Size = new Size(panel.Width - 180, 16),
                 AutoEllipsis = true,
                 Font = new Font("Segoe UI", 9F, FontStyle.Regular),
-                Text = Path.GetFileNameWithoutExtension(filePath)
+                Text = GetProjectDisplayName(filePath)
             };
             nameLbl.Tag = "nameLbl";
             // If this project is the currently loaded recent file, show title bold
@@ -1574,7 +1667,6 @@ namespace NSMBe5 {
             {
                 if (this.toolTip1 != null)
                 {
-                    this.toolTip1.SetToolTip(nameLbl, Path.GetFileName(filePath));
                     this.toolTip1.SetToolTip(pathLbl, filePath);
                     this.toolTip1.SetToolTip(modifiedLbl, System.IO.File.GetLastWriteTime(filePath).ToString());
                 }
@@ -1610,11 +1702,26 @@ namespace NSMBe5 {
 
             // context menu for this card
             var ctx = new ContextMenuStrip();
-            var showItem = new ToolStripMenuItem("Show in Explorer") { Tag = filePath };
+            var showItem = new ToolStripMenuItem(LanguageManager.Get("LevelChooser", "showInExplorerToolStripMenuItem") ?? "Show in Explorer") { Tag = filePath };
             showItem.Click += (s, e) => { ShowInExplorerFor(filePath); };
-            var removeItem = new ToolStripMenuItem("Remove project from list") { Tag = filePath };
+            var setNameItem = new ToolStripMenuItem(LanguageManager.Get("LevelChooser", "setProjectDisplayNameToolStripMenuItem") ?? "Set project display name") { Tag = filePath };
+            setNameItem.Click += (s, e) =>
+            {
+                try
+                {
+                    string current = GetProjectDisplayName(filePath);
+                    if (textForm.ShowDialog(this, LanguageManager.Get("LevelChooser", "SetProjectDisplayName") ?? "Set project display name", current, out string newName) == DialogResult.OK)
+                    {
+                        SetProjectDisplayName(filePath, newName);
+                        nameLbl.Text = GetProjectDisplayName(filePath);
+                    }
+                }
+                catch { }
+            };
+            var removeItem = new ToolStripMenuItem(LanguageManager.Get("LevelChooser", "removeProjectToolStripMenuItem") ?? "Remove project from list") { Tag = filePath };
             removeItem.Click += (s, e) => { RemoveProjectFor(filePath); };
             ctx.Items.Add(showItem);
+            ctx.Items.Add(setNameItem);
             ctx.Items.Add(removeItem);
             panel.ContextMenuStrip = ctx;
 
@@ -1656,7 +1763,47 @@ namespace NSMBe5 {
             if (openROMDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = openROMDialog.FileName;
-                AddToRecentFiles(path);
+
+                // If the project is already in recent files, open it immediately
+                var recentFiles = GetRecentFiles();
+                if (recentFiles.Any(f => string.Equals(f, path, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        LoadROMFromPath(path);
+                        MarkRecentOpened(path);
+                        UpdateCardModifiedLabel(path);
+                    }
+                    return;
+                }
+
+                bool shouldAdd = false;
+                try
+                {
+                    string defaultName = Path.GetFileNameWithoutExtension(path);
+                    var dr = textForm.ShowDialog(this, LanguageManager.Get("LevelChooser", "SetProjectDisplayName") ?? "Set project display name", defaultName, out string newName);
+                    if (dr == DialogResult.OK)
+                    {
+                        shouldAdd = true;
+                        if (!string.IsNullOrEmpty(newName))
+                            projectDisplayNames[path] = newName;
+                        else if (projectDisplayNames.ContainsKey(path))
+                            projectDisplayNames.Remove(path);
+                        SaveProjectDisplayNames();
+                    }
+                }
+                catch { }
+
+                if (shouldAdd)
+                {
+                    AddToRecentFiles(path);
+                    if (System.IO.File.Exists(path))
+                    {
+                        LoadROMFromPath(path);
+                        MarkRecentOpened(path);
+                        UpdateCardModifiedLabel(path);
+                    }
+                }
             }
         }
 
@@ -1827,6 +1974,12 @@ namespace NSMBe5 {
             {
                 currentLoadedRecentFile = null;
             }
+            // also remove any custom display name and persist
+            if (projectDisplayNames.ContainsKey(filePath))
+            {
+                projectDisplayNames.Remove(filePath);
+                SaveProjectDisplayNames();
+            }
             UpdateRecentFilesMenu();
             UpdateRecentFilesPanel();
         }
@@ -1836,16 +1989,7 @@ namespace NSMBe5 {
             if (recentFilesListBox == null) return;
             if (recentFilesListBox.SelectedItem is string filePath)
             {
-                var recentFiles = GetRecentFiles();
-                recentFiles.Remove(filePath);
-                Properties.Settings.Default.RecentFiles = string.Join(";", recentFiles.ToArray());
-                Properties.Settings.Default.Save();
-                UpdateRecentFilesMenu();
-                if (!string.IsNullOrEmpty(currentLoadedRecentFile) && string.Equals(currentLoadedRecentFile, filePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    currentLoadedRecentFile = null;
-                    UpdateCardOpenedState();
-                }
+                RemoveProjectFor(filePath);
             }
         }
 
