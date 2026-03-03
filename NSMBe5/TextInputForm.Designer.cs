@@ -87,10 +87,9 @@
             this.MinimizeBox = false;
             this.Name = "TextInputForm";
             this.ShowIcon = false;
-            this.Text = "<Project name>";
+            this.Text = "<Insert text>";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
