@@ -1,32 +1,41 @@
-# NSMB Editor
-##### Forked from [MeroMero](https://github.com/Mero-Mero/NSMB-Editor) originally by [Dirbaio](https://github.com/Dirbaio/NSMB-Editor)
+# NSMB Editor Reloaded
+For English, see [README.en.md](README.en.md).
 
-## Download
-To download the latest NSMBe build check the [GitHub Release page](https://github.com/MammaMiaTeam/NSMB-Editor/releases/latest/).
+¡Bienvenido a la nueva versión de NSMBe, el editor de niveles por excelencia para New Super Mario Bros. de Nintendo DS!
 
-For legacy builds, check the [NSMBHD Downloads page](https://nsmbhd.net/download/all/).
+Este proyecto renueva y moderniza la interfaz clásica del editor, haciéndola más atractiva y fácil de usar. Además, incorpora nuevas funciones y mejoras que simplifican tu experiencia para la edición de niveles.
 
-## Community
-Join the [NSMB Central Discord](https://discord.gg/x7gr3M9)!
+> ⚠️ Este proyecto está en desarrollo temprano. Puede estar sujeto a cambios frecuentes.
 
-If you want to, you can also join the forums at [NSMBHD](http://nsmbhd.net/).
-
-## Requirements
-- Windows: [.NET Framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472)
-- Linux, MacOSX, Others: [Mono](https://www.mono-project.com/download/stable/)
-
-## Credits
-- Treeki - Original Developer
-- Dirbaio - Second Developer
-- Piranhaplant - Developer
-- MeroMero - Developer
-- RicBent - Developer
-- Mamma Mia Team - Developers and current maintainers
-- Szymbar - Developer, adopted the structure to work with MKDS assembly
-- And all other contributors!
-
-## Previews
+## Capturas
 <p align="left">
-<img src="https://raw.githubusercontent.com/MammaMiaTeam/NSMB-Editor/master/screenshots/filebrowser.png" width="385" title="File Browser">
-<img src="https://raw.githubusercontent.com/MammaMiaTeam/NSMB-Editor/master/screenshots/leveleditor.png" width="400" title="Level Editor">
+<img src="https://raw.githubusercontent.com/MammaMiaTeam/NSMB-Editor/master/screenshots/leveleditor.png" width="400" title="Editor de niveles">
 </p>
+
+## Descargas
+Actualmente no hay descargas disponibles. Si querés usar la nueva versión, tenés que compilar el editor por tu cuenta.
+
+1. Cloná este repositorio en tu equipo local.
+2. En Windows, abrí el archivo `NSMBe5.sln` con Visual Studio Community y seleccioná "Compilar solución". En Linux, asegurate de tener Mono instalado y ejecutá `msbuild NSMBe5.sln` desde la terminal.
+3. El ejecutable se va a generar en la carpeta `bin/Debug`. Ejecutá el archivo resultante para iniciar el editor.
+
+Para versiones antiguas, podés consultar la [página de Releases en GitHub](https://github.com/MammaMiaTeam/NSMB-Editor/releases/latest/).
+
+## Requisitos
+- Windows: [.NET Framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472)
+- Linux, MacOSX y otros: [Mono](https://www.mono-project.com/download/stable/)
+
+## Comunidad
+¡Unite al [Discord de NSMB Central](https://discord.gg/x7gr3M9)!
+
+También podés sumarte al foro: [NSMBHD](http://nsmbhd.net/)
+
+## Créditos
+- Treeki - Desarrollador original
+- Dirbaio - Segundo desarrollador
+- Piranhaplant - Desarrollador
+- MeroMero - Desarrollador
+- RicBent - Desarrollador
+- Mamma Mia Team - Desarrolladores y mantenedores actuales
+- Szymbar - Desarrollador, adaptó la estructura para funcionar con el ensamblado MKDS
+- Y todos los demás colaboradores
