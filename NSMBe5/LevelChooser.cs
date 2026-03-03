@@ -16,20 +16,19 @@
 */
 
 using System;
-
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.IO;
 using NSMBe5.DSFileSystem;
 using NSMBe5.Patcher;
-using System.Diagnostics;
-using System.Drawing;
 using NSMBe5.Plugin;
-using System.Linq;
 using NSMBe5.TilemapEditor;
-using System.Runtime.InteropServices;
 
 namespace NSMBe5 {
     public partial class LevelChooser : Form
@@ -141,6 +140,245 @@ namespace NSMBe5 {
             InitializeComponent();
         }
 
+        private static readonly Color ThemeWhite = ColorTranslator.FromHtml("#FFFFFF");
+        private static readonly Color ThemePanel = ColorTranslator.FromHtml("#F5F5F5");
+        private static readonly Color ThemeTextPrimary = ColorTranslator.FromHtml("#333333");
+        private static readonly Color ThemeTextSecondary = ColorTranslator.FromHtml("#666666");
+        private static readonly Color ThemeHover = ColorTranslator.FromHtml("#EEEEEE");
+        private static readonly Color ThemePressed = ColorTranslator.FromHtml("#E6E6E6");
+        private readonly HashSet<Button> themedButtons = new HashSet<Button>();
+        private readonly HashSet<Panel> themedCards = new HashSet<Panel>();
+
+        private Font GetModernUIFont(float size, FontStyle style)
+        {
+            try
+            {
+                string name = string.IsNullOrWhiteSpace(Properties.Settings.Default.UIFont)
+                    ? "Segoe UI"
+                    : Properties.Settings.Default.UIFont;
+                return new Font(name, size, style);
+            }
+            catch
+            {
+                return new Font("Segoe UI", size, style);
+            }
+        }
+
+        // Replaced: use RectangleF and float radii to avoid clipping/aliasing
+        private GraphicsPath CreateRoundedRectPath(RectangleF rect, float radius)
+        {
+            var gp = new GraphicsPath();
+            float d = Math.Max(0.1f, radius * 2f);
+
+            // Clamp radius so it does not exceed half the size
+            float maxR = Math.Min(rect.Width, rect.Height) / 2f;
+            if (radius > maxR) radius = maxR;
+
+            gp.StartFigure();
+            gp.AddArc(rect.Left, rect.Top, d, d, 180f, 90f);
+            gp.AddArc(rect.Right - d, rect.Top, d, d, 270f, 90f);
+            gp.AddArc(rect.Right - d, rect.Bottom - d, d, d,   0f, 90f);
+            gp.AddArc(rect.Left, rect.Bottom - d, d, d,  90f, 90f);
+            gp.CloseFigure();
+            return gp;
+        }
+
+        // ApplyRoundedRegion now uses RectangleF and the same path that is drawn
+        private void ApplyRoundedRegion(Control c, int radius)
+        {
+            if (c.Width <= 0 || c.Height <= 0) return;
+            var rectf = new RectangleF(0f, 0f, c.Width, c.Height);
+            using (var gp = CreateRoundedRectPath(rectf, radius))
+            {
+                if (c.Region != null) c.Region.Dispose();
+                c.Region = new Region(gp);
+            }
+        }
+
+        private void StyleButton(Button btn)
+        {
+            if (btn == null) return;
+
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0; // disable native border
+            btn.BackColor = ThemeWhite;
+            btn.ForeColor = ThemeTextPrimary;
+            btn.Cursor = Cursors.Hand;
+            btn.Font = GetModernUIFont(9f, FontStyle.Regular);
+
+            ApplyRoundedRegion(btn, 5);
+
+            if (!themedButtons.Contains(btn))
+            {
+                themedButtons.Add(btn);
+
+                btn.Resize += (s, e) => ApplyRoundedRegion(btn, 5);
+                btn.MouseEnter += (s, e) => { if (btn.Enabled) btn.BackColor = ThemeHover; };
+                btn.MouseLeave += (s, e) => { if (btn.Enabled) btn.BackColor = ThemeWhite; };
+                btn.MouseDown += (s, e) => { if (btn.Enabled && e.Button == MouseButtons.Left) btn.BackColor = ThemePressed; };
+                btn.MouseUp += (s, e) => { if (btn.Enabled) btn.BackColor = btn.ClientRectangle.Contains(btn.PointToClient(Cursor.Position)) ? ThemeHover : ThemeWhite; };
+                btn.EnabledChanged += (s, e) =>
+                {
+                    btn.BackColor = btn.Enabled ? ThemeWhite : Color.FromArgb(248, 248, 248);
+                    btn.ForeColor = btn.Enabled ? ThemeTextPrimary : Color.FromArgb(170, 170, 170);
+                };
+
+                // Draw rounded border that exactly follows the same curve (subpixel)
+                btn.Paint += (s, pe) =>
+                {
+                    var b = (Button)s;
+                    pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    pe.Graphics.PixelOffsetMode = PixelOffsetMode.Half; // align the stroke to the pixel for sharp edges
+
+                    // Draw inside the region: offset by 0.5 so the 1px pen stays fully inside
+                    var r = new RectangleF(0.5f, 0.5f, b.Width - 1f, b.Height - 1f);
+                    using (var gp = CreateRoundedRectPath(r, 5f))
+                    using (var pen = new Pen(b.Enabled ? Color.FromArgb(220, 220, 220) : Color.FromArgb(200, 200, 200), 1f))
+                    {
+                        pen.Alignment = PenAlignment.Inset; // so the stroke stays inside the region
+                        pen.LineJoin = LineJoin.Round;
+                        pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                        pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+                        pe.Graphics.DrawPath(pen, gp);
+                    }
+                };
+            }
+        }
+
+        private void StyleCardPanel(Panel card)
+        {
+            if (card == null) return;
+            card.BackColor = ThemePanel;
+            card.BorderStyle = BorderStyle.None;
+            ApplyRoundedRegion(card, 6);
+
+            if (!themedCards.Contains(card))
+            {
+                themedCards.Add(card);
+                card.Resize += (s, e) => ApplyRoundedRegion(card, 6);
+
+                // Centralize hover logic so the entire panel (including children)
+                // turns gray on hover and avoids flicker when moving between children.
+                void enter() => card.BackColor = ThemeHover;
+                void leave() => card.BackColor = ThemePanel;
+
+                // Attach handlers recursively to a control and its children.
+                void AttachHandlers(Control c)
+                {
+                    c.MouseEnter += (s, e) => enter();
+                    c.MouseLeave += (s, e) =>
+                    {
+                        // When the mouse leaves a child, check if it's still inside the panel
+                        // to prevent the panel from reverting to its original color when moving between children.
+                        Point p = card.PointToClient(Cursor.Position);
+                        if (card.ClientRectangle.Contains(p))
+                            enter();
+                        else
+                            leave();
+                    };
+
+                    foreach (Control child in c.Controls)
+                        AttachHandlers(child);
+                }
+
+                // Attach to the panel itself and all existing children
+                AttachHandlers(card);
+
+                // Ensure future dynamically added children also get handlers
+                card.ControlAdded += (s, e) => AttachHandlers(e.Control);
+            }
+        }
+
+        private void ApplyThemeRecursive(Control root)
+        {
+            foreach (Control c in root.Controls)
+            {
+                if (c is TabPage)
+                {
+                    c.BackColor = ThemeWhite;
+                    c.ForeColor = ThemeTextPrimary;
+                }
+                else if (c is GroupBox)
+                {
+                    c.BackColor = ThemePanel;
+                    c.ForeColor = ThemeTextPrimary;
+                    c.Font = GetModernUIFont(9f, FontStyle.Bold);
+                }
+                else if (c is Panel || c is FlowLayoutPanel)
+                {
+                    c.BackColor = ThemeWhite;
+                }
+                else if (c is Label lbl)
+                {
+                    lbl.ForeColor = (lbl.Tag is string t && (t == "modifiedLbl")) ? ThemeTextSecondary : ThemeTextPrimary;
+                    if (lbl.Tag is string t2 && t2 == "nameLbl")
+                        lbl.Font = GetModernUIFont(10f, lbl.Font.Bold ? FontStyle.Bold : FontStyle.Regular);
+                    else
+                        lbl.Font = GetModernUIFont(lbl.Font.Size, lbl.Font.Style);
+                }
+                else if (c is Button btn)
+                {
+                    StyleButton(btn);
+                }
+                else if (c is TextBox tb)
+                {
+                    tb.BackColor = ThemeWhite;
+                    tb.ForeColor = tb.ForeColor == SystemColors.GrayText ? SystemColors.GrayText : ThemeTextPrimary;
+                    tb.BorderStyle = BorderStyle.FixedSingle;
+                    tb.Font = GetModernUIFont(9f, FontStyle.Regular);
+                }
+                else if (c is ListBox lb)
+                {
+                    lb.BackColor = ThemeWhite;
+                    lb.ForeColor = ThemeTextPrimary;
+                    lb.BorderStyle = BorderStyle.FixedSingle;
+                    lb.Font = GetModernUIFont(9f, FontStyle.Regular);
+                }
+                else if (c is TreeView tv)
+                {
+                    tv.BackColor = ThemeWhite;
+                    tv.ForeColor = ThemeTextPrimary;
+                    tv.BorderStyle = BorderStyle.FixedSingle;
+                    tv.LineColor = Color.FromArgb(230, 230, 230);
+                    tv.Font = GetModernUIFont(9f, FontStyle.Regular);
+                }
+
+                ApplyThemeRecursive(c);
+            }
+        }
+
+        private void ApplyModernWhiteTheme()
+        {
+            this.BackColor = ThemeWhite;
+            this.ForeColor = ThemeTextPrimary;
+            this.Font = GetModernUIFont(9f, FontStyle.Regular);
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            if (tabControl1 != null)
+                tabControl1.Font = GetModernUIFont(9.5f, FontStyle.Regular);
+
+            if (textForm != null)
+                textForm.StartPosition = FormStartPosition.CenterParent;
+
+            if (projectsPanel != null)
+                projectsPanel.BackColor = ThemeWhite;
+
+            if (tabPage0 != null) tabPage0.BackColor = ThemeWhite;
+            if (tabPage4 != null) tabPage4.BackColor = ThemeWhite;
+
+            ApplyThemeRecursive(this);
+            EnsureProjectsPanelNoHorizontalScroll();
+            UpdateRecentFilesPanel();
+        }
+
+        private void ShowOwnedForm(Form f)
+        {
+            if (f == null) return;
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.Show(this);
+        }
+
         private void LevelChooser_Load(object sender, EventArgs e)
 		{
 			dlpCheckBox.Checked = Properties.Settings.Default.dlpMode;
@@ -210,7 +448,9 @@ namespace NSMBe5 {
             
             versionLabel.Text = "NSMB Editor " + Version.GetString() + " " + Properties.Resources.BuildDate.Trim();
             Icon = Properties.Resources.nsmbe;
-            
+
+            ApplyModernWhiteTheme();
+
             UpdateMenuState();
             Activate();
         }
@@ -306,7 +546,7 @@ namespace NSMBe5 {
             try
             {
                 LevelEditor NewEditor = new LevelEditor(new NSMBLevel(new InternalLevelSource((string)levelTreeView.SelectedNode.Tag, EditorCaption)));
-                NewEditor.Show();
+                ShowOwnedForm(NewEditor);
             }
             catch (AlreadyEditingException)
             {
@@ -333,7 +573,7 @@ namespace NSMBe5 {
                 {
                     Text = EditorCaption
                 };
-                NewEditor.Show();
+                ShowOwnedForm(NewEditor);
             }
             catch (AlreadyEditingException)
             {
@@ -395,7 +635,7 @@ namespace NSMBe5 {
             if (importLevelDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
             try {
-                new LevelEditor(new NSMBLevel(new ExternalLevelSource(importLevelDialog.FileName))).Show();
+                ShowOwnedForm(new LevelEditor(new NSMBLevel(new ExternalLevelSource(importLevelDialog.FileName))));
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message);
             }
@@ -437,7 +677,7 @@ namespace NSMBe5 {
         {
             try
             {
-                new LevelEditor(new NSMBLevel(new ClipboardLevelSource())).Show();
+                ShowOwnedForm(new LevelEditor(new NSMBLevel(new ClipboardLevelSource())));
             }
             catch (Exception ex)
             {
@@ -452,7 +692,8 @@ namespace NSMBe5 {
                 DataFinderForm = new DataFinder();
             }
 
-            DataFinderForm.Show();
+            DataFinderForm.StartPosition = FormStartPosition.CenterParent;
+            DataFinderForm.Show(this);
             DataFinderForm.Activate();
         }
 
@@ -785,7 +1026,7 @@ namespace NSMBe5 {
             MessageBox.Show("Arm9 binary successfully decompressed", "Arm9 binary decompressing", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private CodePatcher GetCodePatcher(DirectoryInfo path)
+        private CodePatcher GetCodePatcher(System.IO.DirectoryInfo path)
         {
             switch (Properties.Settings.Default.CodePatchingMethod)
             {
@@ -1078,6 +1319,7 @@ namespace NSMBe5 {
             {
                 Properties.Settings.Default.UIFont = fontTextBox.Text;
                 Program.ApplyFontToControls(Controls);
+                ApplyModernWhiteTheme();
             }
             else
             {
@@ -1625,20 +1867,22 @@ namespace NSMBe5 {
             var panel = new Panel
             {
                 Width = cardWidth,
-                Height = 36,
+                Height = 52,
                 Margin = new Padding(8),
-                BorderStyle = BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.None,
                 Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                MinimumSize = new Size(240, 36)
+                MinimumSize = new Size(240, 52),
+                BackColor = ThemePanel
             };
 
             var nameLbl = new Label
             {
                 AutoSize = false,
-                Location = new Point(8, 4),
-                Size = new Size(panel.Width - 180, 16),
+                Location = new Point(10, 6),
+                Size = new Size(panel.Width - 190, 18),
                 AutoEllipsis = true,
-                Font = new Font("Segoe UI", 9F, FontStyle.Regular),
+                Font = GetModernUIFont(10F, FontStyle.Regular),
+                ForeColor = ThemeTextPrimary,
                 Text = GetProjectDisplayName(filePath)
             };
             nameLbl.Tag = "nameLbl";
@@ -1652,31 +1896,32 @@ namespace NSMBe5 {
             var pathLbl = new Label
             {
                 AutoSize = false,
-                Location = new Point(8, 20),
-                Size = new Size(panel.Width - 180, 12),
+                Location = new Point(10, 27),
+                Size = new Size(panel.Width - 190, 16),
                 AutoEllipsis = true,
-                Font = new Font("Segoe UI", 8F),
-                ForeColor = SystemColors.GrayText,
+                Font = GetModernUIFont(8.5F, FontStyle.Regular),
+                ForeColor = ThemeTextSecondary,
                 Text = filePath
             };
             panel.Controls.Add(pathLbl);
 
-            // Compute a sensible width for the modified label so it can show more text before ellipsizing
-            int modWidth = Math.Max(80, Math.Min(300, panel.Width - 160));
+            int modWidth = Math.Max(90, Math.Min(320, panel.Width - 170));
             var modifiedLbl = new Label
             {
                 AutoSize = false,
                 AutoEllipsis = true,
-                Location = new Point(panel.Width - modWidth - 8, 6),
-                Size = new Size(modWidth, 24),
-                Font = new Font("Segoe UI", 8F),
-                ForeColor = SystemColors.GrayText,
+                Location = new Point(panel.Width - modWidth - 10, 10),
+                Size = new Size(modWidth, 28),
+                Font = GetModernUIFont(8.5F, FontStyle.Regular),
+                ForeColor = ThemeTextSecondary,
                 TextAlign = ContentAlignment.MiddleRight,
                 Text = GetRelativeTimeString(System.IO.File.GetLastWriteTime(filePath)),
                 Tag = "modifiedLbl",
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
             panel.Controls.Add(modifiedLbl);
+
+            StyleCardPanel(panel);
 
             // Tooltips for truncated text
             try
@@ -1753,8 +1998,6 @@ namespace NSMBe5 {
             // Only start filtering once the user has entered text (first character).
             UpdateRecentFilesPanel();
         }
-
-        
 
         private void SearchBox_Enter(object sender, EventArgs e)
         {
