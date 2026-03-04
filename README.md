@@ -26,7 +26,7 @@ Para versiones antiguas, podés consultar la [página de Releases en GitHub](htt
 - Linux, MacOSX y otros: [Mono](https://www.mono-project.com/download/stable/)
 
 ## Comunidad
-[¡Discord de Uzno Labs!](https://discord.gg/VW79XukCbj) - Servidor oficial, mantente al día con este u otros de mis proyectos.
+[¡Discord de Uzno Labs!](https://discord.gg/VW79XukCbj) - Servidor oficial, mantenete al día con este u otros de mis proyectos.
 
 [Foro de NSMBHD](http://nsmbhd.net/) - Página dedica al ROM Hacking de NSMB.
 
