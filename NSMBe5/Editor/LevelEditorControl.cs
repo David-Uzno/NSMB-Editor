@@ -25,6 +25,12 @@ namespace NSMBe5
 {
 	public partial class LevelEditorControl : UserControl
 	{
+		private const float MinZoom = 0.25f;
+		private const float MaxZoom = 8f;
+		private const double WheelZoomFactor = 1.1;
+
+		private bool zoomActionInProgress = false;
+
 		public float zoom = 1;
 		private bool drag = false;
 		public LevelMinimap minimap;
@@ -47,7 +53,6 @@ namespace NSMBe5
 			Ready = false;
 			hScrollBar.Visible = false;
 			vScrollBar.Visible = false;
-			MouseWheel += new MouseEventHandler(DrawingArea_MouseWheel);
 			DrawingArea.MouseWheel += new MouseEventHandler(DrawingArea_MouseWheel);
 			this.SetStyle(ControlStyles.Selectable, true);
 			//dragTimer.Start();
@@ -137,10 +142,73 @@ namespace NSMBe5
 
 		private void DrawingArea_MouseWheel(object sender, MouseEventArgs e)
 		{
-			if (Control.ModifierKeys == Keys.Shift)
-				ScrollEditorPixel(new Point((int)(ViewablePixels.X * zoom - e.Delta / 4), (int)(ViewablePixels.Y * zoom)));
+			if (e is HandledMouseEventArgs handledArgs)
+				handledArgs.Handled = true;
+
+			if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				ZoomAtMousePosition(e.Delta);
+				return;
+			}
+
+			if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+				ScrollEditorPixel(new Point(hScrollBar.Value - e.Delta / 4, vScrollBar.Value));
 			else
-				ScrollEditorPixel(new Point((int)(ViewablePixels.X * zoom), (int)(ViewablePixels.Y * zoom - e.Delta / 4)));
+				ScrollEditorPixel(new Point(hScrollBar.Value, vScrollBar.Value - e.Delta / 4));
+		}
+
+		private void ZoomAtMousePosition(int wheelDelta)
+		{
+			if (!Ready || wheelDelta == 0)
+				return;
+
+			Point mousePos = DrawingArea.PointToClient(Control.MousePosition);
+			ZoomAtClientPoint(mousePos, wheelDelta);
+		}
+
+		private void ZoomAtClientPoint(Point clientPoint, int wheelDelta)
+		{
+			if (!Ready || wheelDelta == 0)
+				return;
+
+			if (!TryBeginZoomAction())
+				return;
+
+			try
+			{
+				Point mousePos = clientPoint;
+				mousePos.X = Math.Max(0, Math.Min(DrawingArea.Width, mousePos.X));
+				mousePos.Y = Math.Max(0, Math.Min(DrawingArea.Height, mousePos.Y));
+
+				float previousZoom = zoom;
+				double wheelSteps = wheelDelta / 120.0;
+				float nextZoom = (float)Math.Max(MinZoom, Math.Min(MaxZoom, previousZoom * Math.Pow(WheelZoomFactor, wheelSteps)));
+
+				if (Math.Abs(nextZoom - previousZoom) < 0.0001f)
+					return;
+
+				float worldX = ViewablePixels.X + (mousePos.X / previousZoom);
+				float worldY = ViewablePixels.Y + (mousePos.Y / previousZoom);
+
+				SetZoom(nextZoom);
+
+				int targetScrollX = (int)Math.Round(worldX * nextZoom - mousePos.X);
+				int targetScrollY = (int)Math.Round(worldY * nextZoom - mousePos.Y);
+				ScrollEditorPixel(new Point(targetScrollX, targetScrollY));
+			}
+			finally
+			{
+				zoomActionInProgress = false;
+			}
+		}
+
+		private bool TryBeginZoomAction()
+		{
+			if (zoomActionInProgress)
+				return false;
+
+			zoomActionInProgress = true;
+			return true;
 		}
 
 		#endregion
@@ -636,6 +704,21 @@ namespace NSMBe5
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
 			Console.Out.WriteLine(keyData);
+			Keys keyCode = keyData & Keys.KeyCode;
+			Keys modifiers = keyData & Keys.Modifiers;
+			bool ctrlPressed = (modifiers & Keys.Control) == Keys.Control;
+
+			if (ctrlPressed && (keyCode == Keys.Add || keyCode == Keys.Oemplus))
+			{
+				ZoomAtClientPoint(new Point(DrawingArea.Width / 2, DrawingArea.Height / 2), 120);
+				return true;
+			}
+			if (ctrlPressed && (keyCode == Keys.Subtract || keyCode == Keys.OemMinus))
+			{
+				ZoomAtClientPoint(new Point(DrawingArea.Width / 2, DrawingArea.Height / 2), -120);
+				return true;
+			}
+
 			if (keyData == (Keys.Control | Keys.X)) {
 				cut();
 				return true;
