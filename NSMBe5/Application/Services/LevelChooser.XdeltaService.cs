@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace NSMBe5
@@ -8,6 +9,13 @@ namespace NSMBe5
     {
         private void Xdelta_export_Click(object sender, EventArgs e)
         {
+            string xdeltaExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Runtime", "Tooling", "xdelta3.exe");
+            if (!File.Exists(xdeltaExe))
+            {
+                MessageBox.Show("No se encontró xdelta3.exe en Runtime\\Tooling.", LanguageManager.Get("SpriteData", "ErrorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             MessageBox.Show(LanguageManager.Get("Patch", "XSelectROM") + LanguageManager.Get("Patch", "XRestartAfterApplied"), LanguageManager.Get("Patch", "XExport"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             OpenFileDialog cleanROM_openFileDialog = new OpenFileDialog
@@ -35,7 +43,7 @@ namespace NSMBe5
                 string str = " -f -s \"" + cleanROM_openFileDialog.FileName + "\" \"" + Properties.Settings.Default.ROMPath + "\" \"" + xdelta_saveFileDialog.FileName + "\"";
                 Process process = new Process();
                 process.StartInfo.UseShellExecute = false;
-                process.StartInfo.FileName = "xdelta3.exe";
+                process.StartInfo.FileName = xdeltaExe;
                 process.StartInfo.Arguments = str;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardError = true;
@@ -64,6 +72,13 @@ namespace NSMBe5
 
         private void Xdelta_import_Click(object sender, EventArgs e)
         {
+            string xdeltaExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Runtime", "Tooling", "xdelta3.exe");
+            if (!File.Exists(xdeltaExe))
+            {
+                MessageBox.Show("No se encontró xdelta3.exe en Runtime\\Tooling.", LanguageManager.Get("SpriteData", "ErrorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             DialogResult result = MessageBox.Show("All of the ROM contents will be replaced with the XDelta patch, unlike the NSMBe patches, this one overwrites the ROM entirely!\n\nNSMBe is going to restart after the import has finished.\n\nDo you still want to contiue?", LanguageManager.Get("General", "Warning"), MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result == DialogResult.No)
                 return;
@@ -95,7 +110,7 @@ namespace NSMBe5
                 string str = " -d -f -s \"" + cleanROM_openFileDialog.FileName + "\" \"" + xdelta_openFileDialog.FileName + "\" \"" + Properties.Settings.Default.ROMPath + "\"";
                 Process process = new Process();
                 process.StartInfo.UseShellExecute = false;
-                process.StartInfo.FileName = "xdelta3.exe";
+                process.StartInfo.FileName = xdeltaExe;
                 process.StartInfo.Arguments = str;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardError = true;

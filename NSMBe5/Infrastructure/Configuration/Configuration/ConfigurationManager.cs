@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Text.Json;
+using System.Web.Script.Serialization;
 
 namespace NSMBe5.Configuration
 {
@@ -81,13 +81,8 @@ namespace NSMBe5.Configuration
                 if (File.Exists(ConfigFilePath))
                 {
                     string json = File.ReadAllText(ConfigFilePath);
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                        WriteIndented = true
-                    };
-                    
-                    _settings = JsonSerializer.Deserialize<AppSettings>(json, options);
+                    var serializer = new JavaScriptSerializer();
+                    _settings = serializer.Deserialize<AppSettings>(json);
                     
                     // Validate loaded settings (ensure non-null strings using defaults from AppSettings)
                     if (_settings != null)
@@ -128,13 +123,8 @@ namespace NSMBe5.Configuration
             {
                 try
                 {
-                    var options = new JsonSerializerOptions
-                    {
-                        WriteIndented = true,
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    };
-
-                    string json = JsonSerializer.Serialize(_settings, options);
+                    var serializer = new JavaScriptSerializer();
+                    string json = serializer.Serialize(_settings);
                     File.WriteAllText(ConfigFilePath, json);
                 }
                 catch (Exception ex)
@@ -164,12 +154,8 @@ namespace NSMBe5.Configuration
         public static string GetDefaultConfigJson()
         {
             var defaultSettings = AppSettings.CreateDefault();
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            return JsonSerializer.Serialize(defaultSettings, options);
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(defaultSettings);
         }
     }
 }
