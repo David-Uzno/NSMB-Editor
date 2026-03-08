@@ -13,13 +13,14 @@ Este proyecto renueva y moderniza la interfaz clásica del editor, haciéndola m
 </p>
 
 ## Descargas
-Actualmente no hay descargas disponibles. Si querés usar la nueva versión, tenés que compilar el editor por tu cuenta.
+La última versión del editor está disponible en la [página de Releases](https://github.com/David-Uzno/NSMB-Editor-Reloaded/releases).
+
+### Compilación
+También, podés compilar el código fuente para obtener versiones del editor experimentales:
 
 1. Cloná este repositorio en tu equipo local.
 2. En Windows, abrí el archivo `NSMBe5.sln` con Visual Studio Community y seleccioná "Compilar solución". En Linux, asegurate de tener Mono instalado y ejecutá `msbuild NSMBe5.sln` desde la terminal.
 3. El ejecutable se va a generar en la carpeta `bin/Debug`. Ejecutá el archivo resultante para iniciar el editor.
-
-Para versiones antiguas, podés consultar la [página de Releases en GitHub](https://github.com/MammaMiaTeam/NSMB-Editor/releases/latest/).
 
 ## Requisitos
 - Windows: [.NET Framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472)
